@@ -1,0 +1,32 @@
+---
+pagination:
+  data: digests
+  size: 1
+  alias: digest
+  addAllPagesToCollections: true
+tags:
+  - digest
+permalink: "{% if pagination.pageNumber > 0 %}/{{ digest.date | date('yyyy-MM-dd') }}{% endif %}/index.html"
+layout: layout.njk
+eleventyComputed:
+  title: "{{ digest.date | date('LLL d, yyyy') }}"
+---
+
+<h1>{{ digest.date | date("LLL d, yyyy") }}</h1>
+
+{% for article in digest.articles %}
+    <article>
+        {% if article.title %}
+            <a href="{{ article.url }}" target="_blank"><b>{{ article.title }}</b></a>
+        {% endif %}
+
+        <div>
+            {{ article.description | safe }}
+        </div>
+
+        <div class="article-meta">
+            <span class="source"><a href="{{ article.feed.link }}" target="_blank">{{ article.feed.title }}</a></span>
+            • <a href="{{ article.url }}" target="_blank"><time datetime="{{ article.date }}">{{ article.date | date("h:mm a") }}</time></a>
+        </div>
+    </article>
+{% endfor %}

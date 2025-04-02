@@ -1,0 +1,14 @@
+---
+layout: layout.njk
+title: Archive
+---
+
+<h2>Archive</h2>
+
+<ul>
+  {% for digest in collections.digest %}
+  <li>
+      <a href="{{ digest.url }}">{{ digest.data.title }}</a>
+  </li>
+  {% endfor %}
+</u>
