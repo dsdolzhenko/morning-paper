@@ -38,7 +38,8 @@ function summarize(content) {
 export default async function () {
   const feeds = getFeeds();
 
-  const breakpoint = DateTime.now().minus({ months: 1 }).setZone("UTC");
+  // The oldest date to generate a digests for
+  const startFrom = DateTime.now().minus({ months: 1 }).toJSDate();
 
   const articles = [];
   for (const feed of feeds) {
@@ -49,8 +50,7 @@ export default async function () {
       );
 
       const items = parsedFeed.items.filter(
-        (item) =>
-          DateTime.fromJSDate(item.published).setZone("UTC") > breakpoint,
+        (item) => item.published >= startFrom,
       );
 
       for (const item of items) {
