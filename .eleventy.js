@@ -7,12 +7,12 @@ function dateFilter(date, format) {
   } else if (date instanceof Date) {
     return DateTime.fromJSDate(date, {
       zone: "utc",
-      locale: "en"
+      locale: "en",
     }).toFormat(format);
   } else {
     return DateTime.fromISO(date, {
       zone: "utc",
-      locale: "en"
+      locale: "en",
     }).toFormat(format);
   }
 }

@@ -1,44 +1,47 @@
 import Fetch from "@11ty/eleventy-fetch";
-import { DateTime } from 'luxon';
-import Parser from 'rss-parser';
-import sanitizeHtml from 'sanitize-html';
-import * as fs from 'fs';
-import * as path from 'path';
+import { DateTime } from "luxon";
+import Parser from "rss-parser";
+import sanitizeHtml from "sanitize-html";
+import * as fs from "fs";
+import * as path from "path";
 
 const __dirname = import.meta.dirname;
 
 const parser = new Parser({
   customFields: {
     item: [
-      ['content:encoded', 'content'],
-      ['description', 'description'],
-      ['category', 'categories', {keepArray: true}],
-    ]
-  }
+      ["content:encoded", "content"],
+      ["description", "description"],
+      ["category", "categories", { keepArray: true }],
+    ],
+  },
 });
 
 function sanitize(content) {
   return sanitizeHtml(content, {
-    allowedTags: [ 'b', 'i', 'em', 'strong' ],
+    allowedTags: ["b", "i", "em", "strong"],
   });
 }
 
-const maxContentLength = 500
+const maxContentLength = 500;
+
 function summarize(content) {
   if (content.length <= maxContentLength) {
     return content;
   }
 
-  const lastSpace = content.substr(0, maxContentLength).lastIndexOf(' ');
-  return content.substr(0, lastSpace) + '...';
+  const lastSpace = content.substr(0, maxContentLength).lastIndexOf(" ");
+  return content.substr(0, lastSpace) + "...";
 }
 
 export default async function () {
   let feeds;
   try {
-    feeds = JSON.parse(fs.readFileSync(path.join(__dirname, '../../feeds.json'), 'utf8'));
+    feeds = JSON.parse(
+      fs.readFileSync(path.join(__dirname, "../../feeds.json"), "utf8"),
+    );
   } catch (error) {
-    console.error(`Failed to read feeds.json: ${error.message}`)
+    console.error(`Failed to read feeds.json: ${error.message}`);
     return [];
   }
 
@@ -48,10 +51,14 @@ export default async function () {
   for (const feed of feeds) {
     try {
       console.log(`Fetching feed: ${feed}`);
-      const parsedFeed = await parser.parseString(await Fetch(feed, {duration: "1h", type: "xml"}));
+      const parsedFeed = await parser.parseString(
+        await Fetch(feed, { duration: "1h", type: "xml" }),
+      );
 
-      const items = parsedFeed.items
-        .filter(item => DateTime.fromRFC2822(item.pubDate).setZone("UTC") > breakpoint);
+      const items = parsedFeed.items.filter(
+        (item) =>
+          DateTime.fromRFC2822(item.pubDate).setZone("UTC") > breakpoint,
+      );
 
       for (const item of items) {
         articles.push({
@@ -63,8 +70,10 @@ export default async function () {
           url: item.link,
           author: item.creator || item.author || parsedFeed.title,
           date: DateTime.fromRFC2822(item.pubDate).setZone("UTC"),
-          description: sanitize(summarize(item.description || item.content || '')),
-          categories: item.categories
+          description: sanitize(
+            summarize(item.description || item.content || ""),
+          ),
+          categories: item.categories,
         });
       }
     } catch (error) {
@@ -77,7 +86,7 @@ export default async function () {
 
   // Group articles by date
   const groupedByDate = {};
-  articles.forEach(article => {
+  articles.forEach((article) => {
     const date = article.date.toFormat("yyyy-MM-dd");
     if (!groupedByDate[date]) {
       groupedByDate[date] = [];
@@ -86,11 +95,10 @@ export default async function () {
   });
 
   // Convert into array of objects {date: "...", articles: [...]}
-  const digests = Object.entries(groupedByDate)
-    .map(([date, articles]) => ({
-      date: DateTime.fromISO(date, {zone: "UTC"}),
-      articles: articles
-    }));
+  const digests = Object.entries(groupedByDate).map(([date, articles]) => ({
+    date: DateTime.fromISO(date, { zone: "UTC" }),
+    articles: articles,
+  }));
 
   return digests;
 }

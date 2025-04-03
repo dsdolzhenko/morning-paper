@@ -3,7 +3,7 @@ name: Digest
 on:
   schedule:
     # Run at 5:00 AM UTC every day
-    - cron: '0 5 * * *'
+    - cron: "0 5 * * *"
   # Allow manual triggering
   workflow_dispatch:
   # Run on pushes to main branch
@@ -36,8 +36,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "22"
+          cache: "npm"
 
       - name: Setup Pages
         id: pages
