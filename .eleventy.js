@@ -1,4 +1,5 @@
-import { DateTime } from 'luxon';
+import { EleventyHtmlBasePlugin } from "@11ty/eleventy";
+import { DateTime } from "luxon";
 
 function dateFilter(date, format) {
   if (date instanceof DateTime) {
@@ -18,6 +19,8 @@ function dateFilter(date, format) {
 
 export default function (eleventyConfig) {
   eleventyConfig.addFilter("date", dateFilter);
+
+  eleventyConfig.addPlugin(EleventyHtmlBasePlugin);
 
   return {
     markdownTemplateEngine: "njk",
