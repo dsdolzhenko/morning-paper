@@ -1,21 +1,11 @@
 import Fetch from "@11ty/eleventy-fetch";
 import { DateTime } from "luxon";
-import Parser from "rss-parser";
+import { parseFeed } from "@rowanmanning/feed-parser";
 import sanitizeHtml from "sanitize-html";
 import * as fs from "fs";
 import * as path from "path";
 
 const __dirname = import.meta.dirname;
-
-const parser = new Parser({
-  customFields: {
-    item: [
-      ["content:encoded", "content"],
-      ["description", "description"],
-      ["category", "categories", { keepArray: true }],
-    ],
-  },
-});
 
 function sanitize(content) {
   return sanitizeHtml(content, {
@@ -51,29 +41,28 @@ export default async function () {
   for (const feed of feeds) {
     try {
       console.log(`Fetching feed: ${feed}`);
-      const parsedFeed = await parser.parseString(
+      const parsedFeed = parseFeed(
         await Fetch(feed, { duration: "1h", type: "xml" }),
       );
 
       const items = parsedFeed.items.filter(
         (item) =>
-          DateTime.fromRFC2822(item.pubDate).setZone("UTC") > breakpoint,
+          DateTime.fromJSDate(item.published).setZone("UTC") > breakpoint,
       );
 
       for (const item of items) {
+        console.log(`\t${item.title} ${item.published}`);
         articles.push({
           feed: {
-            link: parsedFeed.link,
+            link: parsedFeed.url,
             title: parsedFeed.title,
           },
           title: item.title,
-          url: item.link,
-          author: item.creator || item.author || parsedFeed.title,
-          date: DateTime.fromRFC2822(item.pubDate).setZone("UTC"),
+          url: item.url,
+          date: DateTime.fromJSDate(item.published).setZone("UTC"),
           description: sanitize(
             summarize(item.description || item.content || ""),
           ),
-          categories: item.categories,
         });
       }
     } catch (error) {
