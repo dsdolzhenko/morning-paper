@@ -7,6 +7,17 @@ import * as path from "path";
 
 const __dirname = import.meta.dirname;
 
+function getFeeds() {
+  try {
+    return JSON.parse(
+      fs.readFileSync(path.join(__dirname, "../../feeds.json"), "utf8"),
+    );
+  } catch (error) {
+    console.error(`Failed to read feeds.json: ${error.message}`);
+    return [];
+  }
+}
+
 function sanitize(content) {
   return sanitizeHtml(content, {
     allowedTags: ["b", "i", "em", "strong"],
@@ -25,15 +36,7 @@ function summarize(content) {
 }
 
 export default async function () {
-  let feeds;
-  try {
-    feeds = JSON.parse(
-      fs.readFileSync(path.join(__dirname, "../../feeds.json"), "utf8"),
-    );
-  } catch (error) {
-    console.error(`Failed to read feeds.json: ${error.message}`);
-    return [];
-  }
+  const feeds = getFeeds();
 
   const breakpoint = DateTime.now().minus({ months: 1 }).setZone("UTC");
 
