@@ -10,7 +10,7 @@
     "build": "eleventy",
     "serve": "eleventy --serve",
     "lint": "eslint",
-    "prettify": "prettier . --check"
+    "prettify": "prettier . --write"
   },
   "devDependencies": {
     "@eslint/js": "^9.23.0",
