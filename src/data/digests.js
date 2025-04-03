@@ -36,12 +36,14 @@ function summarize(content) {
 }
 
 export default async function () {
-  const feeds = getFeeds();
+  const now = DateTime.now().setZone("UTC");
 
   // The oldest date to generate a digests for
-  const startFrom = DateTime.now().minus({ months: 1 }).toJSDate();
+  const startFrom = now.minus({ months: 1 }).toJSDate();
 
+  const feeds = getFeeds();
   const articles = [];
+
   for (const feed of feeds) {
     try {
       console.log(`Fetching feed: ${feed}`);
@@ -54,7 +56,6 @@ export default async function () {
       );
 
       for (const item of items) {
-        console.log(`\t${item.title} ${item.published}`);
         articles.push({
           feed: {
             link: parsedFeed.url,
@@ -79,11 +80,20 @@ export default async function () {
   // Group articles by date
   const groupedByDate = {};
   articles.forEach((article) => {
-    const date = article.date.toFormat("yyyy-MM-dd");
-    if (!groupedByDate[date]) {
-      groupedByDate[date] = [];
+    // Digest includes articles published before next morning
+    let date = article.date;
+    if (
+      article.date.hour < now.hour ||
+      (article.date.hour == now.hour && article.date.minute < now.minute)
+    ) {
+      date = article.date.minus({ days: 1 });
     }
-    groupedByDate[date].push(article);
+
+    const key = date.toFormat("yyyy-MM-dd");
+    if (!groupedByDate[key]) {
+      groupedByDate[key] = [];
+    }
+    groupedByDate[key].push(article);
   });
 
   // Convert into array of objects {date: "...", articles: [...]}
