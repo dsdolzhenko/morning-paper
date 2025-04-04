@@ -75,7 +75,7 @@ export default async function () {
   }
 
   // Sort articles by publication date (newest first)
-  articles.sort((a, b) => new Date(b.date) - new Date(a.date));
+  articles.sort((a, b) => b.date.toJSDate() - a.date.toJSDate());
 
   // Group articles by date
   const groupedByDate = {};
