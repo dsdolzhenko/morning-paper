@@ -2,16 +2,17 @@ import { EleventyHtmlBasePlugin } from "@11ty/eleventy";
 import { DateTime } from "luxon";
 
 function dateFilter(date, format) {
+  const zone = process.env.TIMEZONE || "CET"
   if (date instanceof DateTime) {
-    return date.toFormat(format);
+    return date.setZone(zone).toFormat(format);
   } else if (date instanceof Date) {
     return DateTime.fromJSDate(date, {
-      zone: "utc",
+      zone: zone,
       locale: "en",
     }).toFormat(format);
   } else {
     return DateTime.fromISO(date, {
-      zone: "utc",
+      zone: zone,
       locale: "en",
     }).toFormat(format);
   }
