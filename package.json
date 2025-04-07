@@ -10,6 +10,7 @@
     "build": "eleventy",
     "serve": "eleventy --serve",
     "lint": "eslint",
+    "prettier": "prettier . --check",
     "prettify": "prettier . --write"
   },
   "devDependencies": {
