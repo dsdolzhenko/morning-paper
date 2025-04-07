@@ -28,7 +28,7 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Build the Digest
-        uses: ./.github/workflows/build.yml
+        uses: ./.github/workflows/ci.yml
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
