@@ -35,6 +35,10 @@ function summarize(content) {
   return content.substr(0, lastSpace) + "...";
 }
 
+function getItemDate(item) {
+  return item.published || item.updated;
+}
+
 export default async function () {
   const now = DateTime.now().setZone("UTC");
 
@@ -52,7 +56,7 @@ export default async function () {
       );
 
       const items = parsedFeed.items.filter(
-        (item) => item.published >= startFrom,
+        (item) => getItemDate(item) >= startFrom,
       );
 
       for (const item of items) {
@@ -63,7 +67,7 @@ export default async function () {
           },
           title: item.title,
           url: item.url,
-          date: DateTime.fromJSDate(item.published).setZone("UTC"),
+          date: DateTime.fromJSDate(getItemDate(item)).setZone("UTC"),
           description: sanitize(
             summarize(item.description || item.content || ""),
           ),
