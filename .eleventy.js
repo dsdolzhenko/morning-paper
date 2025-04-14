@@ -23,6 +23,13 @@ export default function (eleventyConfig) {
 
   eleventyConfig.addPlugin(EleventyHtmlBasePlugin);
 
+  eleventyConfig.addCollection("archive", function (collectionApi) {
+    return collectionApi
+      .getFilteredByTag("digest")
+      .sort((a, b) => b.date - a.date)
+      .slice(1);
+  });
+
   return {
     markdownTemplateEngine: "njk",
     dataTemplateEngine: "njk",

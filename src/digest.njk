@@ -9,7 +9,7 @@ tags:
 permalink: "{% if pagination.pageNumber > 0 %}/{{ digest.date | date('yyyy-MM-dd') }}{% endif %}/index.html"
 layout: layout.njk
 eleventyComputed:
-  title: "{{ digest.date | date('LLL d, yyyy') }}"
+  title: "{% if pagination.pageNumber > 0 %}{{ digest.date | date('LLL d, yyyy') }}{% endif %}"
 ---
 
 <h1>{{ digest.date | date("LLL d, yyyy") }}</h1>
