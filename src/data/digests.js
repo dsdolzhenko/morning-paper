@@ -55,9 +55,10 @@ export default async function () {
         await Fetch(feed, { duration: "1h", type: "xml" }),
       );
 
-      const items = parsedFeed.items.filter(
-        (item) => getItemDate(item) >= startFrom,
-      );
+      const items = parsedFeed.items.filter((item) => {
+        const itemDate = getItemDate(item);
+        return itemDate >= startFrom && itemDate <= now;
+      });
 
       for (const item of items) {
         articles.push({
