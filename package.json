@@ -14,7 +14,7 @@
     "prettify": "prettier . --write"
   },
   "devDependencies": {
-    "@eslint/js": "^9.25.1",
+    "@eslint/js": "^9.26.0",
     "eslint": "^9.25.0",
     "eslint-config-prettier": "^10.1.2",
     "globals": "^16.0.0",
