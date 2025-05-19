@@ -25,6 +25,6 @@
     "@11ty/eleventy-fetch": "^5.1.0",
     "@rowanmanning/feed-parser": "^2.0.2",
     "luxon": "^3.6.1",
-    "sanitize-html": "^2.16.0"
+    "sanitize-html": "^2.17.0"
   }
 }
